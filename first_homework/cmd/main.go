@@ -2,23 +2,19 @@ package main
 
 import (
 	"fmt"
-	"sample-app/first_homework/book"
-	"sample-app/first_homework/library"
-	"sample-app/first_homework/storage"
+
+	"github.com/VadimDragociy/go/library"
+	"github.com/VadimDragociy/go/storage"
+
+	"github.com/VadimDragociy/go/book"
 
 	"github.com/google/uuid"
 )
 
-//finished
-
 func main() {
-	vault_slice := []book.Book{}
-	vault_map := map[string]book.Book{}
-	name_to_id := map[string]string{}
 
-	lib := library.LibraryStock{Vault_slice: storage.StorageSlice{vault_slice}, Vault_map: storage.StorageMap{vault_map}, Name_to_id: library.NameToId{name_to_id}}
-
-	// var g Library = library
+	storagemap := storage.NewStorageMap()
+	lib := library.NewLibraryStock(storagemap)
 
 	books_arrive1 := []book.Book{
 		{Name: "Cool scenarios for drama"}, {Name: "Cooking with spoons"}, {Name: "The BusError"}, {Name: "Taburetka"},
@@ -44,11 +40,12 @@ func main() {
 	fmt.Println("I hate ", book3.Name, book3.Id)
 	fmt.Println("I hate ", book4.Name, book4.Id)
 
-	lib.SwitchTypeOfVault(true)
+	lib.Storage = storage.NewStorageSlice()
 
 	for i := 0; i < len(books_arrive2); i++ {
 		lib.AddBook(books_arrive2[i])
 	}
+
 	book5, _ := lib.Search("Salute")
 	book6, _ := lib.Search("The Good, the Bad and the Segmentation fauld")
 
@@ -60,11 +57,3 @@ func main() {
 	fmt.Println(error1)
 
 }
-
-// разбить проект по пакетам
-// в библиотеке не должно быть хранения 					сделано
-// пусть функция возвращает ощибку если книга не найдена	технически не сделано, но сделано по-другому
-// CamelCase												сделано
-// *Book 													сделано
-// обработка ошибок											вроде бы сделано
-// в Searcher только хранилище данных и все					??? переписал по-другому, потому что не понимаю, как имплементировать интерфейсы в код

@@ -1,11 +1,16 @@
 package storage
 
-import "sample-app/first_homework/book"
+import (
+	"github.com/VadimDragociy/go/book"
 
-type StorageMap struct {
-	Vault_map map[string]book.Book
-}
+	"github.com/google/uuid"
+)
 
-type StorageSlice struct {
-	Vault_slice []book.Book
+type Storage interface {
+	GetBookByid(id string) book.Book
+	AddBook(book book.Book) error
+	ClearAndRegenId(generator func() uuid.UUID)
+	GetIdFromName(name string) (string, bool)
+	Search(name string) (book.Book, error)
+	genId() string
 }
