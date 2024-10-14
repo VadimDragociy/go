@@ -1,3 +1,4 @@
-/go.mod
-/go.sum
-/first_homework/main.go
+/mts2024golang
+/clean_architecture
+go.mod
+go.sum
