@@ -10,23 +10,23 @@ import (
 )
 
 func (client *Client) GetVersion() ([]byte, error) {
-	request, request_err := http.NewRequest("GET", client.url+"/version", nil)
+	request, err := http.NewRequest("GET", client.url+"/version", nil)
 
-	if request_err != nil {
-		return nil, request_err
+	if err != nil {
+		return nil, err
 	}
 
-	response, response_err := http.DefaultClient.Do(request)
+	response, err := http.DefaultClient.Do(request)
 
-	if response_err != nil {
-		return nil, response_err
+	if err != nil {
+		return nil, err
 	}
 
 	defer response.Body.Close()
 
-	body, read_err := io.ReadAll(response.Body)
-	if read_err != nil {
-		return nil, read_err
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
 	}
 
 	return body, nil
@@ -34,39 +34,39 @@ func (client *Client) GetVersion() ([]byte, error) {
 }
 
 func (client *Client) PostDecode(inputString string) (string, error) {
-	requestBody, encoding_err := json.Marshal(inputString)
+	requestBody, err := json.Marshal(inputString)
 
-	if encoding_err != nil {
-		return "", encoding_err
+	if err != nil {
+		return "", err
 	}
 
-	request, request_err := http.NewRequest("POST", client.url+"/decode", bytes.NewBuffer(requestBody))
+	request, err := http.NewRequest("POST", client.url+"/decode", bytes.NewBuffer(requestBody))
 
-	if request_err != nil {
-		return "", request_err
+	if err != nil {
+		return "", err
 	}
 	// request.Header.Set()
-	response, response_err := http.DefaultClient.Do(request)
+	response, err := http.DefaultClient.Do(request)
 
-	if response_err != nil {
-		return "", response_err
+	if err != nil {
+		return "", err
 	}
 	defer response.Body.Close()
 
-	body, read_err := io.ReadAll(response.Body)
-	if read_err != nil {
-		return "", read_err
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return "", err
 	}
 
-	var decoded_str string
+	var decodedString string
 
-	decode_err := json.Unmarshal(body, &decoded_str)
+	err = json.Unmarshal(body, &decodedString)
 
-	if decode_err != nil {
-		return "", decode_err
+	if err != nil {
+		return "", err
 	}
 
-	return decoded_str, nil
+	return decodedString, nil
 }
 
 func (client *Client) GetHardOp() (bool, int, error) {
@@ -74,19 +74,19 @@ func (client *Client) GetHardOp() (bool, int, error) {
 
 	defer cancel()
 
-	request, request_err := http.NewRequestWithContext(cntxt, "GET", client.url+"/hard-op", nil)
+	request, err := http.NewRequestWithContext(cntxt, "GET", client.url+"/hard-op", nil)
 
-	if request_err != nil {
-		return false, 500, request_err
+	if err != nil {
+		return false, 500, err
 	}
 
-	response, response_err := http.DefaultClient.Do(request)
+	response, err := http.DefaultClient.Do(request)
 
-	if response_err != nil {
+	if err != nil {
 		if cntxt.Err() == context.DeadlineExceeded {
 			return false, 500, cntxt.Err()
 		}
-		return false, 500, response_err
+		return false, 500, err
 	}
 
 	defer response.Body.Close()

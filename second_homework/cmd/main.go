@@ -4,7 +4,8 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"time"
+	"os/signal"
+	"syscall"
 
 	"github.com/VadimDragociy/go/client"
 	"github.com/VadimDragociy/go/server"
@@ -16,49 +17,37 @@ func main() {
 
 	if err := srv.Start(); err != nil {
 		fmt.Println(err)
-		return
 	}
 
 	client := client.NewClient("http://localhost:8080")
-	body, getVersion_err := client.GetVersion()
+	body, err := client.GetVersion()
 
-	if getVersion_err != nil {
-		fmt.Println(getVersion_err)
-		return
+	if err != nil {
+		fmt.Println(err)
 	}
 	fmt.Println(string(body))
 
-	decodedString, postDecode_err := client.PostDecode(str)
+	decodedString, err := client.PostDecode(str)
 
-	if postDecode_err != nil {
-		fmt.Println(postDecode_err)
-		return
+	if err != nil {
+		fmt.Println(err)
 	}
 	fmt.Println(decodedString)
 
-	status, code, getHardOp_err := client.GetHardOp()
+	status, code, err := client.GetHardOp()
 
-	if getHardOp_err != nil {
-		fmt.Println(getHardOp_err)
-		// return
+	if err != nil {
+		fmt.Println(err)
 	}
 	if status {
 		fmt.Printf("%t, %d\n", status, code)
-		// return
+		return
 	}
 	fmt.Printf("%t\n", status)
 
-	// srv.Shutdown(context.Background())
-
-	// quit := make(chan os.Signal, 1)
-	// signal.Notify(quit, os.Interrupt)
-	// <-quit
-	// // <-quit
-	// // <-quit
-	// fmt.Println("Shutdown signal recieved")
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	fmt.Println("Shutdown signal recieved")
 
 	if err := srv.Shutdown(ctx); err != nil {
 		fmt.Printf("Server shutdown failed: %s\n", err)

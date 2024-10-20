@@ -59,7 +59,7 @@ func NewServer(addr string) *Server {
 			return
 		}
 
-		time.Sleep(time.Duration(rand.Intn(2)) * time.Second) // чтобы чаще было завершение процесса через контекст
+		time.Sleep(time.Duration(rand.Intn(2)+15) * time.Second) // чтобы чаще было завершение процесса через контекст
 
 		status := rand.Intn(2)
 		if status == 0 {
