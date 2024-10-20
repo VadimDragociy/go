@@ -59,9 +59,9 @@ func NewServer(addr string) *Server {
 			return
 		}
 
-		time.Sleep(time.Duration(rand.Intn(2)+15) * time.Second) // чтобы чаще было завершение процесса через контекст
+		time.Sleep(time.Duration(rand.Intn(10)+5) * time.Second) // чтобы чаще было завершение процесса через контекст
 
-		status := rand.Intn(2)
+		status := rand.Intn(10)
 		if status == 0 {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
