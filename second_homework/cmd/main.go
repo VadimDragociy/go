@@ -12,6 +12,10 @@ import (
 )
 
 func main() {
+
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
 	str := base64.StdEncoding.EncodeToString([]byte("Hello, playground"))
 	srv := server.NewServer(":8080")
 
@@ -45,12 +49,13 @@ func main() {
 	}
 	fmt.Printf("%t\n", status)
 
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
+	<-ctx.Done()
+
 	fmt.Println("Shutdown signal recieved")
 
 	if err := srv.Shutdown(ctx); err != nil {
 		fmt.Printf("Server shutdown failed: %s\n", err)
+		return
 	}
 	fmt.Println("Server shutdown successfully")
 }
